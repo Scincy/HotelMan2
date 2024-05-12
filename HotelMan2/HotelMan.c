@@ -360,7 +360,7 @@ bool is_valid_service_name(const char* name) {
     for (int i = 0; name[i] != '\0'; i++) {
         unsigned char ch = (unsigned char)name[i];
         if (!(isalpha(ch))) {
-            // 알파벳이나 한글이 아니면 예외 처리 (숫자 또는 특수 문자 포함)
+            // 알파벳이 아니면 예외 처리 (숫자 또는 특수 문자 포함)
             return false;
         }
     }
