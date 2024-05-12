@@ -6,7 +6,7 @@
 #include "RoomService.h"
 
 
-void initRoomServiceList(struct RoomServiceList* list, int initialCapacity) {
+void InitRoomServiceList(struct RoomServiceList* list, int initialCapacity) {
     list->services = (struct RoomService*)malloc(initialCapacity * sizeof(struct RoomService));
     list->size = 0;
     list->capacity = initialCapacity;
@@ -22,18 +22,12 @@ bool checkDuplicate(const struct RoomServiceList* list, const char* name) {
     return false;  // 중복된 이름이 없으면 false 반환
 }
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="list">동적할당 구조체 배열</param>
-/// <param name="name">추가하려고 하는 서비스의 이름</param>
-/// <param name="price">추가하려고 하는 서비스의 단가</param>
-/// <param name="serveCount">추가하려고 하는 서비스의 제공 횟수</param>
-void addRoomService(struct RoomServiceList* list, const char* name, int price, int serveCount) {
+
+void addRoomService(struct RoomServiceList* list, struct RoomService newService) {
     for (int i = 0; i < list->size; i++) {
-        if (strcmp(list->services[i].name, name) == 0) {
+        if (strcmp(list->services[i].name, newService.name) == 0) {
             // 중복된 이름을 찾은 경우 serveCount만 업데이트
-            list->services[i].serveCount += serveCount;
+            list->services[i].serveCount += newService.serveCount;
             return;
         }
     }
@@ -42,9 +36,9 @@ void addRoomService(struct RoomServiceList* list, const char* name, int price, i
         list->capacity *= 2;
         list->services = (struct RoomService*)realloc(list->services, list->capacity * sizeof(struct RoomService));
     }
-    list->services[list->size].name = strdup(name);
-    list->services[list->size].price = price;
-    list->services[list->size].serveCount = serveCount;
+    list->services[list->size].name = strdup(newService.name);
+    list->services[list->size].price = newService.price;
+    list->services[list->size].serveCount = newService.serveCount;
     list->size++;
 }
 

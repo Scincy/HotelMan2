@@ -8,6 +8,7 @@
 #include <conio.h>
 #include "Floor.h"
 #include "Display.h"
+#include "RoomService.h"
 
 
 
@@ -37,20 +38,21 @@ void InitProgram()
         // 층별 방 데이터 초기화
         for (int j = 0; j < RoomCountInAFloor; j++)
         {
-
+            Room* initTargetRoom = &(ManageData.allRooms[newFloorLevel].rooms[j]);
             float a = ((float)newFloorLevel / (float)sysConfig.MaxFloor * 100.0);
             if (a < 60)
-                ManageData.allRooms[newFloorLevel].rooms[j].grade = 1;
+                initTargetRoom -> grade = 1;
             else if (a < 80)
-                ManageData.allRooms[newFloorLevel].rooms[j].grade = 2;
+                initTargetRoom -> grade = 2;
             else if (a >= 80)
-                ManageData.allRooms[newFloorLevel].rooms[j].grade = 3;
+                initTargetRoom -> grade = 3;
             
             
 
-            ManageData.allRooms[newFloorLevel].rooms[j].occupy = false;
-            ManageData.allRooms[newFloorLevel].rooms[j].floorLevel = newFloorLevel+1;
-            ManageData.allRooms[newFloorLevel].rooms[j].story = j + 1;
+            initTargetRoom -> occupy = false;
+            initTargetRoom -> floorLevel = newFloorLevel+1;
+            initTargetRoom -> story = j + 1;
+            InitRoomServiceList(&(initTargetRoom->roomServices), 200);
         }
     }
 }
@@ -258,6 +260,7 @@ int MainMenu()
     printf("3. 부가 서비스\n");
 
     bool thereIsError = false;
+    int errorcount = 0;
     do {
         printf("입력 >> ");
         scanf("%d", &menuSelect);
@@ -267,15 +270,17 @@ int MainMenu()
             printf("\n입력 에러: %d는 메뉴가 아닙니다. 입력을 확인해 주세요.", menuSelect);
             printf("\n계속하시려면 엔터를 입력하세요...\n");
             SetTextPrintColor(White);
-            getch();//입력 대기 함수
+            getchar();//입력 대기 함수
             thereIsError = true;
+            fflush(stdin);
+            ++errorcount;
         }
         else
         {
             thereIsError = false;
         }
     } while (thereIsError);
-    ClearUpperLine(7);
+    ClearUpperLine((7+3*errorcount));
     fflush(stdin);//입력 버퍼 초기화
     return menuSelect;
 }
@@ -351,7 +356,33 @@ bool CheckInMenu()
 
 void RoomServiceMenu()
 {
+    int targetRoomNumber = -1;
+    struct RoomService *service;
+    printf("┌─────────────────────────────────────────────────────────────────────────────────────┐\n");
+    printf("│                           부가서비스 추가 제거화면입니다.                           │\n");
+    printf("│                                 정보를 입력해 주세요.                               │\n");
+    printf("└─────────────────────────────────────────────────────────────────────────────────────┘\n");
+    
+    printf("부가 서비스 추가 대상 방 번호 >> ");
+    scanf("%d", &targetRoomNumber);
+    
+    Room* target = &(ManageData.allRooms[GetLevel(targetRoomNumber) - 1].rooms[GetStory(targetRoomNumber)]);
+    if (!target->occupy)
+    {
+        //TODO 방이 비어 있지 않을 떄 다시 입력하게 예외처리 추가 필요
+    }
 
+    
+
+    //TODO 아래 내용들 역시 정상 입력 확인하는 예외처리 필요
+    printf("추가할 서비스의 이름 >> ");
+    scanf("%s", &service->name);
+    
+    printf("추가할 서비스의 가격 >> ");
+    scanf("%d", &service->price);
+
+    printf("추가할 서비스의 횟수 >> ");
+    scanf("%d", &service->serveCount);
 }
 
 
@@ -392,7 +423,7 @@ int main()
 
         } while (true);
         break;
-    case 2:
-
+    case 3:
+        RoomServiceMenu();
     }
 }

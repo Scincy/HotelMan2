@@ -36,3 +36,5 @@ int GetRoomPrice(Room room)
     }
 
 }
+int GetLevel(int IntengerRoomNumber) { return IntengerRoomNumber / 100; }
+int GetStory(int IntengetRoomNumber) { return IntengetRoomNumber % 100; }

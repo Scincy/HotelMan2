@@ -12,7 +12,7 @@ struct RoomServiceList {
 	int capacity;
 };
 // 배열 초기화
-void initRoomServiceList(struct RoomServiceList* list, int initialCapacity);
+void InitRoomServiceList(struct RoomServiceList* list, int initialCapacity);
 
 // 룸 서비스 추가, 서비스가 리스트 내에 존재하면 갯수 혹인해서 추가, 리드트에 없었다면 새로 동적할당
 void addRoomService(struct RoomServiceList* list, const char* name, int price, int serveCount);
