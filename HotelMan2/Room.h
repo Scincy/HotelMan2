@@ -9,7 +9,7 @@ typedef struct Room
     int grade;
     int floorLevel;
     int story;
-    struct RoomServiceList serviceList;
+    struct RoomServiceList roomServices;
 }Room;
 char* GetRoomNumber(Room room);
 
