@@ -426,7 +426,43 @@ void RoomServiceMenu()
     service->serveCount = get_numeric_input("추가할 서비스의 횟수 >> ");
 }
 
+void PrintRecept(int roomNumber) 
+{
+    Room* TargetRoom = &(ManageData.allRooms[GetLevel(roomNumber)-1].rooms[GetStory(roomNumber)-1]);
+    SetTextUnderline();
+    printf("정산표\n");
+    SetTextDefault();
 
+    SetTextBold();
+    printf("객실\n");
+    SetTextDefault();
+
+    printf("객실 등급: %d\n", TargetRoom->grade);
+    printf("객실 가격: %d\n", GetRoomPrice(*TargetRoom));
+
+    printf("__________________\n");
+    printf("룸 서비스\n");
+    int sum=0;
+    for (int i = 0; i < TargetRoom->roomServices.size; i++) {
+        int eachServiceTotal = TargetRoom->roomServices.services[i].price * TargetRoom->roomServices.services[i].serveCount;
+        printf("%3d. |%10s. | %3d\\ | %3d회 | Total: %d\\", i+1,
+            TargetRoom->roomServices.services[i].name,
+            TargetRoom->roomServices.services[i].price,
+            TargetRoom->roomServices.services[i].serveCount,
+            eachServiceTotal
+        );
+        sum += eachServiceTotal;
+    }
+
+    printf("__________________\n");
+
+    printf("합계\n");
+    printf("1. 룸 서비스: %d\\\n", sum);
+    printf("2. 객실: %d\\\n", GetRoomPrice(*TargetRoom));
+    printf("=> %d\\\n", sum + GetRoomPrice(*TargetRoom));
+
+    return 0;
+}
 
 int main()
 {
