@@ -392,7 +392,6 @@ int main()
 
         } while (true);
         break;
-    case 2:
-
+    
     }
 }
