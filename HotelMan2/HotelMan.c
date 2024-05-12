@@ -9,6 +9,8 @@
 #include "Floor.h"
 #include "Display.h"
 #include "RoomService.h"
+#include <ctype.h>
+
 
 
 
@@ -354,10 +356,44 @@ bool CheckInMenu()
     return menuChoice;
 }
 
+bool is_valid_service_name(const char* name) {
+    for (int i = 0; name[i] != '\0'; i++) {
+        unsigned char ch = (unsigned char)name[i];
+        if (!(isalpha(ch))) {
+            // 알파벳이나 한글이 아니면 예외 처리 (숫자 또는 특수 문자 포함)
+            return false;
+        }
+    }
+    return true;
+}
+bool is_numeric(const char* str) {
+    while (*str) {
+        if (!isdigit((unsigned char)*str)) {
+            return false;
+        }
+        str++;
+    }
+    return true;
+}
+
+// 숫자 입력을 받아 검증하는 함수
+int get_numeric_input(const char* prompt) {
+    char input_buffer[100];
+    while (true) {
+        printf("%s", prompt);
+        scanf("%s", input_buffer);
+        if (is_numeric(input_buffer)) {
+            return atoi(input_buffer);
+        }
+        else {
+            printf("잘못된 입력입니다. 숫자를 입력해주세요.\n");
+        }
+    }
+}
 void RoomServiceMenu()
 {
     int targetRoomNumber = -1;
-    struct RoomService *service;
+    struct RoomService* service = malloc(sizeof(struct RoomService));
     printf("┌─────────────────────────────────────────────────────────────────────────────────────┐\n");
     printf("│                           부가서비스 추가 제거화면입니다.                           │\n");
     printf("│                                 정보를 입력해 주세요.                               │\n");
@@ -367,22 +403,27 @@ void RoomServiceMenu()
     scanf("%d", &targetRoomNumber);
     
     Room* target = &(ManageData.allRooms[GetLevel(targetRoomNumber) - 1].rooms[GetStory(targetRoomNumber)]);
-    if (!target->occupy)
-    {
-        //TODO 방이 비어 있지 않을 떄 다시 입력하게 예외처리 추가 필요
+    if (!target->occupy) {
+        // 방이 비어 있지 않을 때 예외 처리 추가
+        printf("선택하신 방은 현재 비어있습니다. 다른 방을 선택해주세요.\n");
+        return; // 함수 종료
     }
+    char serviceName[100];
+    while (true) { 
+        printf("추가할 서비스의 이름 >> ");
+        scanf("%s", serviceName);
 
-    
+        if (!is_valid_service_name(serviceName)) {
+            printf("잘못된 서비스 이름입니다. 다시 입력해 주세요.\n");
+        }
+        else {
+            break; // 유효한 입력을 받았으므로 반복 종료
+        }
+    }
+    strcpy(service->name, serviceName); // 유효한 이름을 구조체에 복사
 
-    //TODO 아래 내용들 역시 정상 입력 확인하는 예외처리 필요
-    printf("추가할 서비스의 이름 >> ");
-    scanf("%s", &service->name);
-    
-    printf("추가할 서비스의 가격 >> ");
-    scanf("%d", &service->price);
-
-    printf("추가할 서비스의 횟수 >> ");
-    scanf("%d", &service->serveCount);
+    service->price = get_numeric_input("추가할 서비스의 가격 >> ");
+    service->serveCount = get_numeric_input("추가할 서비스의 횟수 >> ");
 }
 
 
